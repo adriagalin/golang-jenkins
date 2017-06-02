@@ -157,11 +157,16 @@ func (jenkins *Jenkins) postXml(path string, params url.Values, xmlBody io.Reade
 }
 
 // GetJobs returns all jobs you can read.
-func (jenkins *Jenkins) GetJobs() ([]Job, error) {
+func (jenkins *Jenkins) GetJobs(name string) ([]Job, error) {
 	var payload = struct {
 		Jobs []Job `json:"jobs"`
 	}{}
-	err := jenkins.get("", nil, &payload)
+	var err error
+	if name != "" {
+		err = jenkins.get(fmt.Sprintf("/job/%s", name), nil, &payload)
+	} else {
+		err = jenkins.get("", nil, &payload)
+	}
 	return payload.Jobs, err
 }
 
